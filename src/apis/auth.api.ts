@@ -42,7 +42,7 @@ class Auth extends HttpClient {
     this._initializeResponseInterceptor();
   }
 
-  private _initializeRequestInterceptor = (): void => {
+  protected _initializeRequestInterceptor = (): void => {
    this.instance.interceptors.request.use((config) => {
       const token = getTokenLocal();
       if (token && config.headers) {
@@ -52,7 +52,7 @@ class Auth extends HttpClient {
     });
   };
 
-  private _initializeResponseInterceptor = (): void => {
+  protected _initializeResponseInterceptor = (): void => {
     this.instance.interceptors.response.use(
       (response: AxiosResponse) => response,
       (error) => Promise.resolve(error.response)

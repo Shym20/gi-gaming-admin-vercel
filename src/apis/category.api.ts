@@ -22,7 +22,7 @@ class CategoryApi extends HttpClient {
     }
 
     // 🔐 Attach token
-    private _initializeRequestInterceptor = (): void => {
+    protected _initializeRequestInterceptor = (): void => {
         this.instance.interceptors.request.use((config) => {
             const token = getTokenLocal();
             if (token && config.headers) {
@@ -33,7 +33,7 @@ class CategoryApi extends HttpClient {
     };
 
     // 🔄 Handle response
-    private _initializeResponseInterceptor = (): void => {
+    protected _initializeResponseInterceptor = (): void => {
         this.instance.interceptors.response.use(
             (response: AxiosResponse) => response,
             (error) => Promise.resolve(error.response)
