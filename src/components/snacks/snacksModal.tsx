@@ -49,7 +49,7 @@ const SnackModal: React.FC<Props> = ({ snack, onClose, onSuccess }) => {
           snack ? "Snack updated successfully" : "Snack created successfully"
         );
 
-        onSuccess();
+        onSuccess(payload);
         onClose();
       } else {
         toast.error(res?.data?.message || "Operation failed");

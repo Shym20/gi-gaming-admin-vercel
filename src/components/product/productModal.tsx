@@ -26,6 +26,7 @@ const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
         condition: product?.condition || "NEW",
         price: Number(product?.price) || 0,
         stock: product?.stock || 0,
+        deposit: product?.deposit || 0,
     });
 
     useEffect(() => {
@@ -42,6 +43,7 @@ const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
                 condition: product.condition || "NEW",
                 price: Number(product.price) || 0,
                 stock: product.stock || 0,
+                deposit: product.deposit || 0,
             });
         }
     }, [product]);
@@ -79,6 +81,7 @@ const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
                 serialNumber: form.serialNumber,
                 condition: form.condition,
                 price: form.price,
+                deposit: 0,
                 stock: form.stock,
                 availability: form.stock > 0 ? "IN_STOCK" : "OUT_OF_STOCK",
             };

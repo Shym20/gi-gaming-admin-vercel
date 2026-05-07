@@ -20,7 +20,7 @@ const RentalsCreateScreen: React.FC = () => {
     const rentalProducts = getRentalCatalogProducts(state)
     const defaultProduct = getAvailableRentalProducts(state)[0] || null
     const [accessories, setAccessories] = useState<Accessory[]>(
-        defaultProduct?.accessories || [{ item: "Console Unit", qty: 1 }]
+      defaultProduct?.accessories || [{ productId: "", qty: 1 }]
     )
     console.log("Default Product:", defaultProduct)
     const [formData, setFormData] = useState({
@@ -33,7 +33,10 @@ const RentalsCreateScreen: React.FC = () => {
         due: ""
     })
     const addRow = () => {
-        setAccessories((prev) => [...prev, { item: "", qty: 1 }])
+      setAccessories((prev) => [
+    ...prev,
+    { productId: "", qty: 1 }
+])
     }
     const removeRow = (index: number) => {
         setAccessories((prev: Accessory[]) =>

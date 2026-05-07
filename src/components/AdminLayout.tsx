@@ -46,8 +46,8 @@ function AdminLayout({ children }: AdminLayoutProps): React.ReactElement {
     dispatch(updateUser(null));
 
     // Clear localStorage
-    setTokenLocal("");
-    setUserLocal("");
+    setTokenLocal(null);
+    setUserLocal(null);
 
     //clear cookies
     Cookies.remove("giGamingAdmin_auth_token", { path: "/" });

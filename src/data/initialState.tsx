@@ -8,7 +8,7 @@ export const initialState: AppState = {
     productsScreen: "inventory",
     rentalsScreen: "list",
     rentalLedgerRentalId: null,
-
+    
     stats: {
         revenue: 45280,
         bookings: 142,
