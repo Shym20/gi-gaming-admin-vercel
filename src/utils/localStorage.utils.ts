@@ -18,14 +18,14 @@ export const getUserLocal = () => {
   }
 };
 
-export const setTokenLocal = (token: string) => {
+export const setTokenLocal = (token: any | null) => {
   Cookies.set("giGamingAdmin_auth_token", token, {
     expires: 30,
     path: "/", // ✅ IMPORTANT
   });
 };
 
-export const setUserLocal = (user: any) => {
+export const setUserLocal = (user: any | null) => {
   Cookies.set("gi-gaming-admin_ufo", JSON.stringify(user), {
     expires: 30,
     path: "/", // ✅ IMPORTANT
