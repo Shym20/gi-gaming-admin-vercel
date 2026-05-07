@@ -103,11 +103,11 @@ export const initialState: AppState = {
         { id: "USR-003", name: "Mike Ross", email: "mike@example.com", phone: "+91 9123456789", location: "Bangalore, Karnataka", aadhaar: "", pan: "", balance: 450, bookings: 8, status: "ACTIVE", joined: "2023-08-11", kycStatus: "PENDING" },
     ],
 
-    // centers: [
-    //     { id: "CTR-01", name: "Downtown Hub", location: "City Center", pcs: 45, consoles: 12, status: "ACTIVE" },
-    //     { id: "CTR-02", name: "Uptown Arena", location: "North Mall", pcs: 30, consoles: 8, status: "ACTIVE" },
-    //     { id: "CTR-03", name: "Eastside VR", location: "Tech Park", pcs: 15, consoles: 5, status: "MAINTENANCE" },
-    // ],
+    centers: [
+         { id: "CTR-01", name: "Downtown Hub", location: "City Center", pcs: 45, consoles: 12, status: "ACTIVE" },
+         { id: "CTR-02", name: "Uptown Arena", location: "North Mall", pcs: 30, consoles: 8, status: "ACTIVE" },
+         { id: "CTR-03", name: "Eastside VR", location: "Tech Park", pcs: 15, consoles: 5, status: "MAINTENANCE" },
+     ],
 
     products: [
         {

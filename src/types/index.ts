@@ -12,7 +12,7 @@ export interface AppState {
   bookings: any[];
   rentals: any[];
   users: any[];
-  // centers: any[];
+  centers: any[];
   products: any[];
   rentalProducts: any[];
   snacks: any[];

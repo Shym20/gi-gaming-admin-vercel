@@ -142,7 +142,7 @@ export interface AppState {
   bookings: Booking[]
   rentals: Rental[]
   users: User[]
-  // centers: Center[]
+  centers: Center[]
   products: Product[]
   rentalProducts: any[]
   snacks: Snack[]
