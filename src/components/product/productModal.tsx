@@ -14,8 +14,8 @@ const storeProductService = new StoreProductApi();
 
 const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
 
-    const [categories, setCategories] = useState<any[]>([]);
-    const [selectedCategoryId, setSelectedCategoryId] = useState("");
+    // const [categories, setCategories] = useState<any[]>([]);
+    // const [selectedCategoryId, setSelectedCategoryId] = useState("");
     const [subCategories, setSubCategories] = useState<any[]>([]);
 
     const [form, setForm] = useState({

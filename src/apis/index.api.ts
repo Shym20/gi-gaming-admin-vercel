@@ -4,10 +4,10 @@ import type {
   AxiosResponse,
   AxiosError,
 } from "axios";
-import Cookies from "js-cookie";
-import toast from "react-hot-toast";
+// import Cookies from "js-cookie";
+// import toast from "react-hot-toast";
 
-const baseURL: string = import.meta.env.VITE_API_URL || "";
+// const baseURL: string = import.meta.env.VITE_API_URL || "";
 
 export class HttpClient {
   protected instance: AxiosInstance;
@@ -20,20 +20,20 @@ export class HttpClient {
     this._initializeResponseInterceptor();
   }
 
-  private _initializeResponseInterceptor = (): void => {
+  protected _initializeResponseInterceptor = (): void => {
     this.instance.interceptors.response.use(
       this._handleResponse,
       this._handleError
     );
   };
 
-  private _handleResponse = <T>(
+  protected _handleResponse = <T>(
     response: AxiosResponse<T>
   ): AxiosResponse<T> => {
     return response;
   };
 
-  private _handleError = async (
+  protected _handleError = async (
     error: AxiosError
   ): Promise<never> => {
     const response = error.response;

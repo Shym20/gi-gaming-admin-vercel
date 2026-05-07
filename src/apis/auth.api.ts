@@ -34,7 +34,7 @@ class Auth extends HttpClient {
   // private signUpConfig: ApiConfig = ApiRoutes.Auth.SignUp;
   private sendOtpConfig: ApiConfig = ApiRoutes.Auth.SendOtp;
   private verifyOtpConfig: ApiConfig = ApiRoutes.Auth.VerifyOtp;
-  private resendOtpConfig: ApiConfig = ApiRoutes.Auth.ResendOtp;
+  // private resendOtpConfig: ApiConfig = ApiRoutes.Auth.ResendOtp;
 
   constructor() {
     super(baseURL);

@@ -2,7 +2,6 @@ import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import { getTokenLocal } from "../utils/localStorage.utils";
 import HttpClient from "../apis/index.api";
 import ApiRoutes from "../configs/endpoints.config";
-import type { Snacks } from "../modules/snacks";
 
 // 🔹 API Config type
 type ApiConfig = {

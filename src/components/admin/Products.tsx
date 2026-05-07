@@ -161,72 +161,87 @@ const Products = () => {
 
             {/* BODY */}
             <tbody>
-              {products.map((row: any, i) => (
-                <tr
-                  key={row.id}
-                  className="border-b-2 border-black hover:bg-[#f4f4f0]"
-                >
-                  <td className="p-4 border-r-2 border-black font-bold">
-                    {row.id}
-                  </td>
 
-                  <td className="p-4 border-r-2 border-black font-bold uppercase text-xs">
-                    {row.name}
-                  </td>
-
-                  {/* SUB CATEGORY */}
-                  <td className="p-4 border-r-2 border-black">
-                    {row.categoryName}
-                  </td>
-
-                  {/* TYPE */}
-                  <td className="p-4 border-r-2 border-black">
-                    {row.productType || "-"}
-                  </td>
-
-                  {/* SERIAL */}
-                  <td className="p-4 border-r-2 border-black">
-                    {row.sku || "-"}
-                  </td>
-
-                  {/* CONDITION */}
-                  <td className="p-4 border-r-2 border-black">
-                    {row.condition || "-"}
-                  </td>
-
-                  {/* AVAILABILITY */}
-                  <td className="p-4 border-r-2 border-black">
-                    {row.stock > 0 ? "AVAILABLE" : "OUT_OF_STOCK"}
-                  </td>
-
-                  {/* PRICE */}
-                  <td className="p-4 border-r-2 border-black font-bold">
-                    ₹{row.price}
-                  </td>
-
-                  {/* STOCK */}
-                  <td className="p-4 border-r-2 border-black font-bold">
-                    {row.stock}
-                  </td>
-
-                  {/* STATUS */}
-                  <td className="p-4 border-r-2 border-black">
-                    <span className="bg-[#00ff66] border-2 border-black px-3 py-1 text-xs font-bold shadow-[2px_2px_0px_#000]">
-                      {row.stock > 0 ? "IN_STOCK" : "OUT_OF_STOCK"}
-                    </span>
-                  </td>
-
-                  {/* ACTION */}
-                  <td className="p-4 flex justify-center">
-                    <button onClick={() => {
-                      setSelectedProduct(row);
-                      setOpenModal(true);
-                    }} className="bg-white border-2 border-black p-2 shadow-[4px_4px_0px_#000]">
-                      <i className="ph ph-pencil text-lg"></i>
-                    </button>
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan={11}
+                    className="p-10 text-center font-bold text-lg"
+                  >
+                    Loading products...
                   </td>
                 </tr>
-              ))}
+              ) : products.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={11}
+                    className="p-10 text-center font-bold text-lg"
+                  >
+                    No products found
+                  </td>
+                </tr>
+              ) : (
+                products.map((row: any) => (
+                  <tr
+                    key={row.id}
+                    className="border-b-2 border-black hover:bg-[#f4f4f0]"
+                  >
+                    <td className="p-4 border-r-2 border-black font-bold">
+                      {row.id}
+                    </td>
+
+                    <td className="p-4 border-r-2 border-black font-bold uppercase text-xs">
+                      {row.name}
+                    </td>
+
+                    <td className="p-4 border-r-2 border-black">
+                      {row.categoryName}
+                    </td>
+
+                    <td className="p-4 border-r-2 border-black">
+                      {row.productType || "-"}
+                    </td>
+
+                    <td className="p-4 border-r-2 border-black">
+                      {row.sku || "-"}
+                    </td>
+
+                    <td className="p-4 border-r-2 border-black">
+                      {row.condition || "-"}
+                    </td>
+
+                    <td className="p-4 border-r-2 border-black">
+                      {row.stock > 0 ? "AVAILABLE" : "OUT_OF_STOCK"}
+                    </td>
+
+                    <td className="p-4 border-r-2 border-black font-bold">
+                      ₹{row.price}
+                    </td>
+
+                    <td className="p-4 border-r-2 border-black font-bold">
+                      {row.stock}
+                    </td>
+
+                    <td className="p-4 border-r-2 border-black">
+                      <span className="bg-[#00ff66] border-2 border-black px-3 py-1 text-xs font-bold shadow-[2px_2px_0px_#000]">
+                        {row.stock > 0 ? "IN_STOCK" : "OUT_OF_STOCK"}
+                      </span>
+                    </td>
+
+                    <td className="p-4 flex justify-center">
+                      <button
+                        onClick={() => {
+                          setSelectedProduct(row);
+                          setOpenModal(true);
+                        }}
+                        className="bg-white border-2 border-black p-2 shadow-[4px_4px_0px_#000]"
+                      >
+                        <i className="ph ph-pencil text-lg"></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

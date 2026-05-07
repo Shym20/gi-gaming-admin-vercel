@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react"
 import CenterModal from "../center/centerModal";
-import { useApp } from "../../context/AppContext"
 import type { Center } from "../../types/apptypes"
 import StatusBadge from "../shared/StatusBadge"
 import CentersApi from "../../apis/centers.api";
