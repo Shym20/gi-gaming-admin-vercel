@@ -1,7 +1,4 @@
 import { useState } from "react";
-import toast from "react-hot-toast";
-import CategoryModal from "../categories/categoriesModal";
-import ConfirmModal from "../shared/confirmModal";
 
 type Report = {
     id: number;
@@ -13,16 +10,12 @@ type Report = {
 };
 
 const Reports = () => {
-    const [showForm, setShowForm] = useState(false);
+   
     const [search, setSearch] = useState("");
-    const [deleteId, setDeleteId] = useState<string | null>(null);
-    const [deleteLoading, setDeleteLoading] = useState(false);
-
-    const [selectedReport, setSelectedReport] =
-        useState<Report | null>(null);
-
+   
+ 
     // STATIC DATA
-    const [reports, setReports] = useState<Report[]>([
+    const [reports] = useState<Report[]>([
         {
             id: 1,
             reportedBy: "Rahul Sharma",
@@ -200,28 +193,6 @@ const Reports = () => {
                 </table>
             </div>
 
-            {/* Modal */}
-            {showForm && (
-                <CategoryModal
-                    category={selectedCategory}
-                    onClose={() => setShowForm(false)}
-                    onSuccess={(newCategory) => {
-                        console.log(newCategory);
-
-                        setShowForm(false);
-                    }}
-                />
-            )}
-
-            {/* Delete Confirm */}
-            {deleteId && (
-                <ConfirmModal
-                    message="Are you sure you want to delete this category?"
-                    onConfirm={handleDelete}
-                    onCancel={() => setDeleteId(null)}
-                    loading={deleteLoading}
-                />
-            )}
         </div>
     );
 };
