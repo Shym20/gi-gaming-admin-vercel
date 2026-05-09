@@ -6,7 +6,7 @@ interface RevenueChartProps {
 }
 
 const RevenueChart: React.FC<RevenueChartProps> = ({ data }) => {
-  const maxValue = Math.max(...data.map((d) => d.amount));
+ const maxValue = Math.max(...data.map((d) => d.amount), 1);
 
   return (
     <div className="brutal-card p-6  border-4  border-black bg-white shadow-[6px_6px_0_black]">

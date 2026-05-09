@@ -105,11 +105,15 @@ function Login(): JSX.Element {
               </label>
 
               <input
-                type="number"
-                placeholder="+91 9876543210"
+                type="tel"
+                placeholder="Enter 10-digit phone number"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                className="brutal-input"
+                maxLength={10}
+                onChange={(e) => {
+                  const value = e.target.value.replace(/\D/g, "");
+                  setPhone(value.slice(0, 10));
+                }}
+                className="brutal-input appearance-none"
               />
             </div>
 
@@ -129,7 +133,7 @@ function Login(): JSX.Element {
 
               <input
                 type="text"
-                placeholder="1234"
+                placeholder="Enter 6-digit OTP"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value)}
                 className="brutal-input"

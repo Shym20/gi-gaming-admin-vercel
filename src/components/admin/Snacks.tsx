@@ -6,6 +6,7 @@ import ConfirmModal from "../shared/confirmModal";
 
 type Snack = {
   id: string;
+  snackId: string;
   name: string;
   price: number;
   stock: number;
@@ -19,6 +20,7 @@ const Snacks = () => {
   const [showForm, setShowForm] = useState(false);
   const [snacks, setSnacks] = useState<Snack[]>([]);
   const [search, setSearch] = useState("");
+  const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [selectedSnack, setSelectedSnack] = useState<Snack | null>(null);
@@ -47,6 +49,8 @@ const Snacks = () => {
 
   const fetchSnacks = async () => {
     try {
+      setLoading(true);
+
       const res = await snacksService.getAllSnacks();
 
       if (res?.status === 200) {
@@ -54,8 +58,9 @@ const Snacks = () => {
 
         const formatted = data.map((item: any) => ({
           id: item.id,
+          snackId: item.snackId,
           name: item.name,
-          price: Number(item.price), // ⚠️ API returns string
+          price: Number(item.price),
           stock: item.stock,
           status: item.status,
         }));
@@ -67,6 +72,8 @@ const Snacks = () => {
     } catch (error) {
       console.error(error);
       toast.error("Something went wrong");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,16 +105,16 @@ const Snacks = () => {
   return (
     <div className="p-6 bg-[#f4f4f0] min-h-screen font-mono">
       {/* Header */}
-      <div className="flex justify-between items-center bg-white border-4 border-black p-4 shadow-[6px_6px_0px_#000] mb-6">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 bg-white border-4 border-black p-4 shadow-[6px_6px_0px_#000] mb-6">
         <h2 className="text-2xl font-black uppercase">Snacks Management</h2>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
           {/* Search */}
-          <div className="flex items-center border-2 border-black px-3 py-2 bg-white shadow-[4px_4px_0px_#000]">
+          <div className="flex items-center w-full sm:w-[260px] border-2 border-black px-3 py-2 bg-white shadow-[4px_4px_0px_#000]">
             <i className="ph ph-magnifying-glass mr-2"></i>
             <input
               placeholder="Search Snacks..."
-              className="outline-none"
+              className="outline-none bg-transparent w-full"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -119,7 +126,7 @@ const Snacks = () => {
               setSelectedSnack(null);
               setShowForm(true);
             }}
-            className="bg-[#ffe600] border-4 border-black px-4 py-2 font-bold shadow-[4px_4px_0px_#000] flex items-center gap-2 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition"
+            className="bg-[#ffe600] border-4 border-black px-4 py-2 font-bold shadow-[4px_4px_0px_#000] flex items-center justify-center gap-2 hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-none transition w-full sm:w-auto"
           >
             <i className="ph ph-plus"></i> ADD SNACK
           </button>
@@ -141,52 +148,93 @@ const Snacks = () => {
           </thead>
 
           <tbody>
-            {filtered.map((s) => (
-              <tr
-                key={s.id}
-                className="border-b-2 border-black hover:bg-[#f4f4f0] transition"
-              >
-                <td className="p-4 border-r-2 border-black font-bold">
-                  {s.id}
-                </td>
-
-                <td className="p-4 border-r-2 border-black font-bold text-xs uppercase">
-                  {s.name}
-                </td>
-
-                <td className="p-4 border-r-2 border-black text-right font-bold">
-                  ₹{s.price}
-                </td>
-
-                <td
-                  className={`p-4 border-r-2 border-black text-center font-bold ${s.stock === 0 ? "text-pink-500" : ""
-                    }`}
+            {loading ? (
+              [...Array(5)].map((_, index) => (
+                <tr
+                  key={index}
+                  className="border-b-2 border-black animate-pulse"
                 >
-                  {s.stock}
-                </td>
+                  <td className="p-4 border-r-2 border-black">
+                    <div className="h-4 bg-gray-300 rounded w-20"></div>
+                  </td>
 
-                <td className="p-4 border-r-2 border-black">
-                  {getStatusBadge(s.status)}
-                </td>
+                  <td className="p-4 border-r-2 border-black">
+                    <div className="h-4 bg-gray-300 rounded w-32"></div>
+                  </td>
 
-                <td className="p-4 text-center space-x-2">
-                  {/* Edit */}
-                  <button onClick={() => {
-                    setSelectedSnack(s);
-                    setShowForm(true);
-                  }} className="bg-white border-2 border-black p-2 shadow-[3px_3px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition">
-                    <i className="ph ph-pencil text-lg"></i>
-                  </button>
+                  <td className="p-4 border-r-2 border-black">
+                    <div className="h-4 bg-gray-300 rounded w-16 ml-auto"></div>
+                  </td>
 
-                  {/* Delete */}
-                  <button onClick={() => setDeleteId(s.id)} className="bg-white border-2 border-black p-2 shadow-[3px_3px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition">
-                    <i className="ph ph-trash text-lg text-red-500"></i>
-                  </button>
-                </td>
-              </tr>
-            ))}
+                  <td className="p-4 border-r-2 border-black">
+                    <div className="h-4 bg-gray-300 rounded w-10 mx-auto"></div>
+                  </td>
 
-            {!filtered.length && (
+                  <td className="p-4 border-r-2 border-black">
+                    <div className="h-6 bg-gray-300 rounded w-24"></div>
+                  </td>
+
+                  <td className="p-4">
+                    <div className="flex justify-center gap-2">
+                      <div className="h-10 w-10 bg-gray-300 rounded"></div>
+                      <div className="h-10 w-10 bg-gray-300 rounded"></div>
+                    </div>
+                  </td>
+                </tr>
+              ))
+
+            ) : filtered.length ? (
+              filtered.map((s) => (
+                <tr
+                  key={s.id}
+                  className="border-b-2 border-black hover:bg-[#f4f4f0] transition"
+                >
+                  <td className="p-4 border-r-2 border-black font-bold">
+                    {s.snackId}
+                  </td>
+
+                  <td className="p-4 border-r-2 border-black font-bold text-xs uppercase">
+                    {s.name}
+                  </td>
+
+                  <td className="p-4 border-r-2 border-black text-right font-bold">
+                    ₹{s.price}
+                  </td>
+
+                  <td
+                    className={`p-4 border-r-2 border-black text-center font-bold ${s.stock === 0 ? "text-pink-500" : ""
+                      }`}
+                  >
+                    {s.stock}
+                  </td>
+
+                  <td className="p-4 border-r-2 border-black">
+                    {getStatusBadge(s.status)}
+                  </td>
+
+                  <td className="p-4 text-center space-x-2">
+                    {/* Edit */}
+                    <button
+                      onClick={() => {
+                        setSelectedSnack(s);
+                        setShowForm(true);
+                      }}
+                      className="bg-white border-2 border-black p-2 shadow-[3px_3px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition"
+                    >
+                      <i className="ph ph-pencil text-lg"></i>
+                    </button>
+
+                    {/* Delete */}
+                    <button
+                      onClick={() => setDeleteId(s.id)}
+                      className="bg-white border-2 border-black p-2 shadow-[3px_3px_0px_#000] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none transition"
+                    >
+                      <i className="ph ph-trash text-lg text-red-500"></i>
+                    </button>
+                  </td>
+                </tr>
+              ))
+            ) : (
               <tr>
                 <td colSpan={6} className="p-6 text-center font-bold">
                   No snacks found

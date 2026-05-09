@@ -14,9 +14,9 @@ const storeProductService = new StoreProductApi();
 
 const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
 
-    // const [categories, setCategories] = useState<any[]>([]);
+    const [categories, setCategories] = useState<any[]>([]);
     // const [selectedCategoryId, setSelectedCategoryId] = useState("");
-    const [subCategories, setSubCategories] = useState<any[]>([]);
+    // const [categories, setCategories] = useState("");
 
     const [form, setForm] = useState({
         name: product?.name || "",
@@ -53,17 +53,7 @@ const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
             const res = await categoryService.getAllCategories();
 
             if (res?.status === 200) {
-                const categories = res.data?.data || [];
-
-                // 🔥 flatten all subcategories
-                const allSubs = categories.flatMap((cat: any) =>
-                    cat.subCategories.map((sub: any) => ({
-                        ...sub,
-                        parentName: cat.name, // optional (useful for label)
-                    }))
-                );
-
-                setSubCategories(allSubs);
+                setCategories(res.data?.data || []);
             }
         } catch (error) {
             console.error(error);
@@ -146,7 +136,7 @@ const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
 
                         <div>
                             <label className="text-sm font-bold uppercase">
-                                Category (Subcategory)
+                                Category
                             </label>
 
                             <select
@@ -158,9 +148,9 @@ const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
                             >
                                 <option value="">Select Category</option>
 
-                                {subCategories.map((sub) => (
-                                    <option key={sub.id} value={sub.id}>
-                                        {sub.parentName} / {sub.name}
+                                {categories.map((category: any) => (
+                                    <option key={category.id} value={category.id}>
+                                        {category.name}
                                     </option>
                                 ))}
                             </select>

@@ -25,6 +25,9 @@ type ApiRoutesType = {
     VerifyOtp: ApiConfig;
     ResendOtp: ApiConfig;
   };
+  Dashboard: {
+    getDashboard: ApiConfig;
+  };
   Centers: {
     CreateCenters: ApiConfig;
     GetAllCenters: ApiConfig;
@@ -45,6 +48,9 @@ type ApiRoutesType = {
   };
   Category: {
     GetAllCategories: ApiConfig;
+    CreateCategory: ApiConfig;
+    UpdateCategory: ApiConfig;
+    DeleteCategory: ApiConfig;
   };
   StoreProduct: {
     CreateStoreProduct: ApiConfig;
@@ -68,6 +74,12 @@ const ApiRoutes: ApiRoutesType = {
     ResendOtp: {
       Endpoint: "api/auth/resend-otp",
       Method: HttpMethod.Post,
+    },
+  },
+  Dashboard: {
+    getDashboard: {
+      Endpoint: "/admin/dashboard",
+      Method: HttpMethod.Get,
     },
   },
   Centers: {
@@ -126,8 +138,20 @@ const ApiRoutes: ApiRoutesType = {
   },
   Category: {
     GetAllCategories: {
-      Endpoint: "api/category/get-all-categories",
+      Endpoint: "api/category/get-categories",
       Method: HttpMethod.Get,
+    },
+    CreateCategory: {
+      Endpoint: "api/category/create-category",
+      Method: HttpMethod.Post,
+    },
+    UpdateCategory: {
+      Endpoint: "api/category/update-category",
+      Method: HttpMethod.Patch,
+    },
+    DeleteCategory: {
+      Endpoint: "api/category/delete-category",
+      Method: HttpMethod.Delete,
     },
   },
   StoreProduct: {

@@ -11,6 +11,9 @@ import Users from "../components/admin/Users"
 import Centers from "../components/admin/Centers"
 import Products from "../components/admin/Products"
 import Snacks from "../components/admin/Snacks"
+import Categories from "../components/admin/Categories";
+import Reports from "../components/admin/Reports";
+import Wallet from "../components/admin/Wallet";
 
 function AdminApp(): JSX.Element {
 
@@ -33,8 +36,11 @@ function AdminApp(): JSX.Element {
         <Route path="rentals" element={<Rentals />} />
         <Route path="users" element={<Users />} />
         <Route path="centers" element={<Centers />} />
+        <Route path="categories" element={<Categories />} />
         <Route path="products" element={<Products />} />
         <Route path="snacks" element={<Snacks />} />
+        <Route path="reports" element={<Reports />} />
+        <Route path="wallet" element={<Wallet />} />
       </Routes>
     </AdminLayout>
   )

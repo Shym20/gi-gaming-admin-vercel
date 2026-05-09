@@ -93,6 +93,7 @@ const SnackModal: React.FC<Props> = ({ snack, onClose, onSuccess }) => {
             <input
               type="number"
               placeholder="Price"
+              min={1}
               className="border-2 border-black px-3 py-2 shadow-[4px_4px_0px_#000]"
               value={form.price}
               onChange={(e) => setForm({ ...form, price: e.target.value })}
@@ -101,6 +102,7 @@ const SnackModal: React.FC<Props> = ({ snack, onClose, onSuccess }) => {
             <input
               type="number"
               placeholder="Stock"
+              min={1}
               className="border-2 border-black px-3 py-2 shadow-[4px_4px_0px_#000]"
               value={form.stock}
               onChange={(e) => setForm({ ...form, stock: e.target.value })}

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useApp } from '../context/AppContext'
 import type { NavItem, AdminLayoutProps } from '../types/admin'
@@ -30,8 +30,10 @@ function AdminLayout({ children }: AdminLayoutProps): React.ReactElement {
     { route: 'rentals', icon: 'ph-game-controller', label: 'Rentals' },
     { route: 'users', icon: 'ph-users', label: 'Users' },
     { route: 'centers', icon: 'ph-package', label: 'Centers' },
+    { route: 'categories', icon: 'ph-squares-four', label: 'Categories' },
     { route: 'products', icon: 'ph-gear', label: 'Products' },
-    { route: 'snacks', icon: 'ph-popcorn', label: 'Snacks' }
+    { route: 'snacks', icon: 'ph-popcorn', label: 'Snacks' },
+    { route: 'reports', icon: 'ph-warning-circle', label: 'Reports' }
   ]
 
   const isActive = (route: string): boolean => {
@@ -39,6 +41,7 @@ function AdminLayout({ children }: AdminLayoutProps): React.ReactElement {
   }
 
   const dispatch = useDispatch();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = () => {
     // Clear Redux
@@ -64,17 +67,49 @@ function AdminLayout({ children }: AdminLayoutProps): React.ReactElement {
   return (
     <div className="min-h-screen flex flex-col md:flex-row w-full">
       {/* Sidebar */}
-      <aside className="flex flex-col w-full md:w-64 bg-white border-b-4 md:border-b-0 md:border-r-4 border-black md:min-h-screen z-40">
-        <div className="p-6 border-b-4 border-black bg-[#ffe600]">
-          <h1 className="text-3xl font-black uppercase tracking-tighter leading-none">GAMEHUB</h1>
-          <p className="font-mono text-[10px] font-bold mt-1 uppercase">Admin Portal</p>
+      {/* <aside className="flex flex-col w-full md:w-64 bg-white border-b-4 md:border-b-0 md:border-r-4 border-black md:min-h-screen z-40"> */}
+      <aside
+        className={`
+    fixed md:static top-0 left-0
+    h-screen md:h-screen
+    w-[280px] md:w-64
+    bg-white
+    border-r-4 border-black
+    z-50
+    flex flex-col
+    transition-transform duration-300
+    ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}
+    md:translate-x-0
+  `}
+      >
+        <div className="p-6 border-b-4 border-black bg-[#ffe600] flex justify-between items-start">
+
+          <div>
+            <h1 className="text-3xl font-black uppercase tracking-tighter leading-none">
+              GAMEHUB
+            </h1>
+
+            <p className="font-mono text-[10px] font-bold mt-1 uppercase">
+              Admin Portal
+            </p>
+          </div>
+
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="md:hidden text-3xl font-black leading-none"
+          >
+            ×
+          </button>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 overflow-y-auto p-4 space-y-2 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
           {navItems.map((item) => (
             <button
               key={item.route}
-              onClick={() => navigate(`/admin/${item.route}`)}
+              onClick={() => {
+                navigate(`/admin/${item.route}`);
+                setSidebarOpen(false);
+              }}
               className={`nav-item ${isActive(item.route) ? 'active' : ''}`}
             >
               <i className={`ph ${item.icon} text-lg`}></i> {item.label}
@@ -100,17 +135,61 @@ function AdminLayout({ children }: AdminLayoutProps): React.ReactElement {
           </button>
         </div>
       </aside>
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+        />
+      )}
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
         <header className="bg-white border-b-4 border-black p-4 flex justify-between items-center z-30 flex-shrink-0">
-          <div className="font-mono font-bold text-sm hidden sm:block">{dateStr}</div>
-          <div className="flex items-center gap-4 ml-auto">
-            <span className="flex h-3 w-3 relative">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ff66] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-[#00ff66] border border-black"></span>
-            </span>
-            <span className="font-mono text-xs font-bold uppercase">System Online</span>
+
+          {/* Left Side */}
+          <div className="flex items-center">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="md:hidden border-2 border-black p-2 bg-[#ffe600]"
+            >
+              <i className="ph ph-list text-2xl"></i>
+            </button>
+
+            <h1 className="text-2xl sm:hidden block ml-3 font-black uppercase tracking-tighter leading-none">
+              GAMEHUB
+            </h1>
+
+            <div className="font-mono font-bold text-sm hidden sm:block ml-4">
+              {dateStr}
+            </div>
+          </div>
+
+          {/* Right Side */}
+          <div className="flex items-center gap-3 ml-auto">
+
+            {/* Wallet */}
+           <div
+  onClick={() => navigate("/admin/wallet")}
+  className="hidden sm:flex items-center border-2 border-black bg-[#ffe600] px-3 py-1 shadow-[2px_2px_0px_#000] cursor-pointer hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+>
+  <i className="ph ph-wallet text-lg mr-2"></i>
+
+  <span className="font-mono text-xs font-bold uppercase">
+    ₹100
+  </span>
+</div>
+            {/* Status */}
+            <div className="flex items-center gap-2">
+              <span className="flex h-3 w-3 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00ff66] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-[#00ff66] border border-black"></span>
+              </span>
+
+              <span className="font-mono text-xs font-bold uppercase">
+                System Online
+              </span>
+            </div>
+
           </div>
         </header>
 
