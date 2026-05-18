@@ -57,7 +57,29 @@ type ApiRoutesType = {
     GetAllStoreProducts: ApiConfig;
     UpdateStoreProduct: ApiConfig;
     DeleteStoreProduct: ApiConfig;
+    GetSKU: ApiConfig;
   };
+  User: {
+    CreateUser: ApiConfig;
+    GetAllUsers: ApiConfig;
+    GetUserById: ApiConfig;
+    UpdateUserDetail: ApiConfig;
+    RechargeUserWallet: ApiConfig;
+    WalletTransaction: ApiConfig;
+    ToggleUserStatus: ApiConfig;
+  };
+  UserRental: {
+    CreateUserRental: ApiConfig;
+    GetAllUserRental: ApiConfig;
+    UpdateUserRental: ApiConfig;
+    DeleteUserRental: ApiConfig;
+    GetOverdueRentalList: ApiConfig;
+    AddLateFeesToUserRental: ApiConfig;
+    SendOverdueReminderToUserRental: ApiConfig;
+    getRentalLedger: ApiConfig;
+    getUserRentalDetail: ApiConfig;
+    getRentalActivityTimeline: ApiConfig;
+  }
 };
 
 // 🔹 API Routes Object
@@ -124,15 +146,15 @@ const ApiRoutes: ApiRoutesType = {
       Method: HttpMethod.Post,
     },
     GetAllRentals: {
-      Endpoint: "api/rental/get-rentals",
+      Endpoint: "api/rental-product/get-rental-products",
       Method: HttpMethod.Get,
     },
     UpdateRental: {
-      Endpoint: "api/rental/update-rental",
+      Endpoint: "api/rental-product/update-rental-product",
       Method: HttpMethod.Patch,
     },
     DeleteRental: {
-      Endpoint: "api/rental/delete-rental",
+      Endpoint: "api/rental-product/delete-rental-product",
       Method: HttpMethod.Delete,
     },
   },
@@ -163,6 +185,10 @@ const ApiRoutes: ApiRoutesType = {
       Endpoint: "api/product/get-products",
       Method: HttpMethod.Get,
     },
+    GetSKU: {
+      Endpoint: "api/product/generate-sku",
+      Method: HttpMethod.Get,
+    },
     UpdateStoreProduct: {
       Endpoint: "api/product/update-product",
       Method: HttpMethod.Patch,
@@ -170,6 +196,78 @@ const ApiRoutes: ApiRoutesType = {
     DeleteStoreProduct: {
       Endpoint: "api/product/delete-product",
       Method: HttpMethod.Delete,
+    },
+  },
+  User: {
+    CreateUser: {
+      Endpoint: "admin/create-user",
+      Method: HttpMethod.Post,
+    },
+    GetAllUsers: {
+      Endpoint: "admin/users",
+      Method: HttpMethod.Get,
+    },
+    GetUserById: {
+      Endpoint: "admin/user-detail",
+      Method: HttpMethod.Get,
+    },
+    UpdateUserDetail: {
+      Endpoint: "admin/update-user",
+      Method: HttpMethod.Patch,
+    },
+    RechargeUserWallet: {
+      Endpoint: "admin/recharge-wallet",
+      Method: HttpMethod.Post,
+    },
+    WalletTransaction: {
+      Endpoint: "admin/wallet-transactions",
+      Method: HttpMethod.Get,
+    },
+    ToggleUserStatus: {
+      Endpoint: "admin/toggle-user-status",
+      Method: HttpMethod.Patch,
+    }
+  },
+  UserRental: {
+    CreateUserRental: {
+      Endpoint: "admin/book-rental",
+      Method: HttpMethod.Post,
+    },
+    GetAllUserRental: {
+      Endpoint: "admin/rental-lising",
+      Method: HttpMethod.Get,
+    },
+    UpdateUserRental: {
+      Endpoint: "admin/update-user",
+      Method: HttpMethod.Patch,
+    },
+    DeleteUserRental: {
+      Endpoint: "admin/update-user",
+      Method: HttpMethod.Patch,
+    },
+    GetOverdueRentalList: {
+      Endpoint: "admin/users-overdue-list",
+      Method: HttpMethod.Get,
+    },
+    AddLateFeesToUserRental: {
+      Endpoint: "admin/rental/late-fee",
+      Method: HttpMethod.Post,
+    },
+    SendOverdueReminderToUserRental: {
+      Endpoint: "admin/send-overdue-reminder",
+      Method: HttpMethod.Get,
+    },
+    getRentalLedger: {
+      Endpoint: "admin/get-rental-ledger",
+      Method: HttpMethod.Get,
+    },
+    getUserRentalDetail: {
+      Endpoint: "admin/rental-detail",
+      Method: HttpMethod.Get,
+    },
+    getRentalActivityTimeline: {
+      Endpoint: "admin/rental-activity-log",
+      Method: HttpMethod.Get,
     },
   },
 

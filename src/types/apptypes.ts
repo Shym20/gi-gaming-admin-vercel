@@ -75,6 +75,7 @@ export interface Rental {
 
 export interface User {
   id: string
+  userId: String;
   name?: string
   email: string
   phone: string

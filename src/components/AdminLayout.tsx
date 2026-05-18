@@ -7,6 +7,7 @@ import { updateToken, updateUser } from '../redux/redux-slice/user.slice';
 import { getUserLocal, setTokenLocal, setUserLocal } from '../utils/localStorage.utils';
 import Cookies from "js-cookie";
 import toast from 'react-hot-toast';
+import NotificationModal from './notification/notificationModal';
 
 function AdminLayout({ children }: AdminLayoutProps): React.ReactElement {
   const navigate = useNavigate()
@@ -42,6 +43,7 @@ function AdminLayout({ children }: AdminLayoutProps): React.ReactElement {
 
   const dispatch = useDispatch();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
 
   const handleLogout = () => {
     // Clear Redux
@@ -67,7 +69,6 @@ function AdminLayout({ children }: AdminLayoutProps): React.ReactElement {
   return (
     <div className="min-h-screen flex flex-col md:flex-row w-full">
       {/* Sidebar */}
-      {/* <aside className="flex flex-col w-full md:w-64 bg-white border-b-4 md:border-b-0 md:border-r-4 border-black md:min-h-screen z-40"> */}
       <aside
         className={`
     fixed md:static top-0 left-0
@@ -167,17 +168,32 @@ function AdminLayout({ children }: AdminLayoutProps): React.ReactElement {
           {/* Right Side */}
           <div className="flex items-center gap-3 ml-auto">
 
-            {/* Wallet */}
-           <div
-  onClick={() => navigate("/admin/wallet")}
-  className="hidden sm:flex items-center border-2 border-black bg-[#ffe600] px-3 py-1 shadow-[2px_2px_0px_#000] cursor-pointer hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
->
-  <i className="ph ph-wallet text-lg mr-2"></i>
+            {/* Notification */}
+            <button
+              type="button"
+              onClick={() => setNotificationOpen(true)}
+              className="relative sm:flex items-center justify-center border-2 border-black bg-white w-9 h-9 shadow-[2px_2px_0px_#000] cursor-pointer hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+              title="Notifications"
+            >
+              <i className="ph ph-bell text-xl"></i>
 
-  <span className="font-mono text-xs font-bold uppercase">
-    ₹100
-  </span>
-</div>
+              {/* Badge */}
+              <span className="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 bg-[#ff3366] text-white border-2 border-black rounded-full text-[10px] font-black flex items-center justify-center leading-none">
+                3
+              </span>
+            </button>
+
+            {/* Wallet */}
+            <div
+              onClick={() => navigate("/admin/wallet")}
+              className="hidden sm:flex items-center border-2 border-black bg-[#ffe600] px-3 py-1 shadow-[2px_2px_0px_#000] cursor-pointer hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+            >
+              <i className="ph ph-wallet text-lg mr-2"></i>
+
+              <span className="font-mono text-xs font-bold uppercase">
+                ₹100
+              </span>
+            </div>
             {/* Status */}
             <div className="flex items-center gap-2">
               <span className="flex h-3 w-3 relative">
@@ -193,7 +209,11 @@ function AdminLayout({ children }: AdminLayoutProps): React.ReactElement {
           </div>
         </header>
 
-        <div className="p-4 md:p-8 overflow-y-auto flex-1 bg-[#f4f4f0]">
+        {notificationOpen && (
+          <NotificationModal onClose={() => setNotificationOpen(false)} />
+        )}
+
+        <div className="p-4 md:p-8 overflow-y-auto flex-1 bg-[#f4f4f0] scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-transparent">
           {children}
         </div>
       </main>

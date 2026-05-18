@@ -24,6 +24,10 @@ const Snacks = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [selectedSnack, setSelectedSnack] = useState<Snack | null>(null);
+  const [page, setPage] = useState(1);
+  const [limit] = useState(5);
+  const [totalSnacks, setTotalSnacks] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
 
   const filtered = snacks.filter(
     (s) =>
@@ -44,14 +48,14 @@ const Snacks = () => {
   };
 
   useEffect(() => {
-    fetchSnacks();
-  }, []);
+    fetchSnacks(page);
+  }, [page]);
 
-  const fetchSnacks = async () => {
+  const fetchSnacks = async (currentPage = page) => {
     try {
       setLoading(true);
 
-      const res = await snacksService.getAllSnacks();
+      const res = await snacksService.getAllSnacks(currentPage, limit);
 
       if (res?.status === 200) {
         const data = res.data?.data || [];
@@ -66,6 +70,14 @@ const Snacks = () => {
         }));
 
         setSnacks(formatted);
+
+        setTotalSnacks(res.data?.pagination?.total || 0);
+        setTotalPages(
+          res.data?.pagination?.totalPages ||
+          res.data?.pagination?.lastPage ||
+          1
+        );
+        setPage(currentPage);
       } else {
         toast.error(res?.data?.message || "Failed to fetch snacks");
       }
@@ -89,7 +101,7 @@ const Snacks = () => {
         toast.success("Snack deleted successfully");
 
         setDeleteId(null);
-        await fetchSnacks(); // 🔥 refresh list
+        await fetchSnacks(page);
       } else {
         toast.error(res?.data?.message || "Delete failed");
       }
@@ -243,13 +255,51 @@ const Snacks = () => {
             )}
           </tbody>
         </table>
+        {/* PAGINATION */}
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-4 border-2 border-black bg-white px-4 py-3 shadow-[4px_4px_0px_#000]">
+
+          <div className="text-sm font-bold uppercase">
+            Total Snacks: {totalSnacks}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage((prev) => prev - 1)}
+              className={`border-2 border-black px-4 py-2 font-bold uppercase shadow-[3px_3px_0px_#000]
+      ${page === 1
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-[#ffe600]"
+                }`}
+            >
+              Prev
+            </button>
+
+            <div className="border-2 border-black px-4 py-2 font-bold bg-black text-white shadow-[3px_3px_0px_#000]">
+              {page} / {totalPages}
+            </div>
+
+            <button
+              disabled={page === totalPages}
+              onClick={() => setPage((prev) => prev + 1)}
+              className={`border-2 border-black px-4 py-2 font-bold uppercase shadow-[3px_3px_0px_#000]
+      ${page === totalPages
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-[#ffe600]"
+                }`}
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
+
       {showForm && (
         <SnackModal
           snack={selectedSnack}
           onClose={() => setShowForm(false)}
           onSuccess={async () => {
-            await fetchSnacks();
+            await fetchSnacks(page);
           }}
         />
       )}

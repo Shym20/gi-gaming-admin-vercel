@@ -12,11 +12,11 @@ type CreateCenterRequest = {
 };
 
 type UpdateCenterRequest = {
-  id: string;
-  name: string;
-  address?: string;
-  pcsCount: number;
-  consoleCount: number;
+    id: string;
+    name: string;
+    address?: string;
+    pcsCount: number;
+    consoleCount: number;
 };
 
 
@@ -72,10 +72,13 @@ class Centers extends HttpClient {
     };
 
     // Get All Centers API
-    public getAllCenters = async (): Promise<AxiosResponse> => {
+    public getAllCenters = async (
+        page = 1,
+        limit = 10
+    ): Promise<AxiosResponse> => {
         return this.instance({
             method: this.getAllCentersConfig.Method,
-            url: this.getAllCentersConfig.Endpoint,
+            url: `${this.getAllCentersConfig.Endpoint}?page=${page}&limit=${limit}`,
         });
     };
 
@@ -90,11 +93,11 @@ class Centers extends HttpClient {
     };
 
     public deleteCenter = async (id: string): Promise<AxiosResponse> => {
-  return this.instance({
-    method: this.deleteCenterConfig.Method,
-    url: `${this.deleteCenterConfig.Endpoint}/${id}`,
-  });
-};
+        return this.instance({
+            method: this.deleteCenterConfig.Method,
+            url: `${this.deleteCenterConfig.Endpoint}/${id}`,
+        });
+    };
 }
 
 export default Centers;

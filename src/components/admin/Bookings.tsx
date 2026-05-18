@@ -3,6 +3,7 @@ import { useApp } from "../../context/AppContext"
 import StatusBadge from "../shared/StatusBadge"
 import SearchBar from "../shared/Searchbar"
 import type { Booking } from "../../types/booking"
+import BookingModal from "../bookings/bookingModal"
 
 const tableHeaders = [
     { label: "ID", className: "p-4 border-r-2 border-black" },
@@ -118,24 +119,10 @@ const Bookings: React.FC = () => {
 
             {/* Modal */}
             {selectedBooking && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                    <div className="brutal-card bg-white p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-
-                        <div className="flex justify-between items-center mb-6 border-b-4 border-black pb-4">
-                            <h3 className="text-xl font-black uppercase">
-                                Booking Details: {selectedBooking?.id}
-                            </h3>
-
-                            <button
-                                onClick={() => setSelectedBooking(null)}
-                                className="brutal-btn brutal-hover px-3 py-1"
-                            >
-                                <i className="ph ph-x text-xl"></i>
-                            </button>
-                        </div>
-
-                    </div>
-                </div>
+                <BookingModal
+                    booking={selectedBooking}
+                    onClose={() => setSelectedBooking(null)}
+                />
             )}
         </div>
     )

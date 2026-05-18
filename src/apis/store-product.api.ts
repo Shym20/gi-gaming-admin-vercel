@@ -9,9 +9,9 @@ type CreateStoreProductRequest = {
     name: string;
     categoryId: string;
     productType: string;
-    serialNumber: string;
-    condition: string;
+    sku: string;
     price: number;
+    rentPrice: number;
     stock: number;
     deposit: number;
 };
@@ -20,6 +20,7 @@ type UpdateStoreProductRequest = {
     id: string;
     name: string;
     price: number;
+    rentPrice: number;
     stock: number;
 };
 
@@ -38,6 +39,7 @@ class StoreProductApi extends HttpClient {
     private getAllStoreProductsConfig: ApiConfig = ApiRoutes.StoreProduct.GetAllStoreProducts;
     private updateStoreProductConfig: ApiConfig = ApiRoutes.StoreProduct.UpdateStoreProduct;
     private deleteStoreProductConfig: ApiConfig = ApiRoutes.StoreProduct.DeleteStoreProduct;
+    private getSKUConfig: ApiConfig = ApiRoutes.StoreProduct.GetSKU;
 
     constructor() {
         super(baseURL);
@@ -76,10 +78,50 @@ class StoreProductApi extends HttpClient {
     };
 
     // Get All Store Products API
-    public getAllStoreProducts = async (): Promise<AxiosResponse> => {
+    public getAllStoreProducts = async (
+        page = 1,
+        limit = 10,
+        centerId?: string,
+        search?: string,
+        categoryId?: string,
+        status?: string,
+        productType?: string
+    ): Promise<AxiosResponse> => {
+        const params = new URLSearchParams();
+
+        params.append("page", String(page));
+        params.append("limit", String(limit));
+
+        if (centerId) {
+            params.append("centerId", centerId);
+        }
+
+        if (search?.trim()) {
+            params.append("search", search.trim());
+        }
+
+        if (categoryId) {
+            params.append("categoryId", categoryId);
+        }
+
+        if (status) {
+            params.append("status", status);
+        }
+
+        if (productType) {
+            params.append("productType", productType);
+        }
+
         return this.instance({
             method: this.getAllStoreProductsConfig.Method,
-            url: this.getAllStoreProductsConfig.Endpoint,
+            url: `${this.getAllStoreProductsConfig.Endpoint}?${params.toString()}`,
+        });
+    };
+
+    public getSKU = async (centerId: string): Promise<AxiosResponse> => {
+        return this.instance({
+            method: this.getSKUConfig.Method,
+            url: `${this.getSKUConfig.Endpoint}/${centerId}`,
         });
     };
 

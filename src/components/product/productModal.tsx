@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CategoryApi from "../../apis/category.api";
 import StoreProductApi from "../../apis/store-product.api";
+import CenterApi from "../../apis/centers.api";
 import toast from "react-hot-toast";
 
 interface Props {
@@ -11,39 +12,44 @@ interface Props {
 
 const categoryService = new CategoryApi();
 const storeProductService = new StoreProductApi();
+const centerService = new CenterApi();
 
 const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
 
     const [categories, setCategories] = useState<any[]>([]);
+    const [centers, setCenters] = useState<any[]>([]);
     // const [selectedCategoryId, setSelectedCategoryId] = useState("");
     // const [categories, setCategories] = useState("");
 
     const [form, setForm] = useState({
         name: product?.name || "",
         categoryId: product?.categoryId || "",
+        centerId: product?.centerId || "",
         productType: product?.productType || "CONSOLE",
-        serialNumber: product?.sku || "",
-        condition: product?.condition || "NEW",
-        price: Number(product?.price) || 0,
-        stock: product?.stock || 0,
+        sku: product?.sku || "",
+        price: product?.price ?? "",
+        rentPrice: product?.rentPrice ?? "",
+        stock: product?.stock ?? "",
         deposit: product?.deposit || 0,
     });
 
     useEffect(() => {
         fetchCategories();
+        fetchCenters();
     }, []);
 
     useEffect(() => {
         if (product) {
             setForm({
-                name: product.name || "",
-                categoryId: product.categoryId || "",
-                productType: product.productType || "CONSOLE",
-                serialNumber: product.sku || "",
-                condition: product.condition || "NEW",
-                price: Number(product.price) || 0,
-                stock: product.stock || 0,
-                deposit: product.deposit || 0,
+                name: product?.name || "",
+                categoryId: product?.categoryId || "",
+                centerId: product?.centerId || "",
+                productType: product?.productType || "CONSOLE",
+                sku: product?.sku || "",
+                price: product?.price ?? "",
+                rentPrice: product?.rentPrice ?? "",
+                stock: product?.stock ?? "",
+                deposit: product?.deposit || 0,
             });
         }
     }, [product]);
@@ -60,6 +66,18 @@ const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
         }
     };
 
+    const fetchCenters = async () => {
+        try {
+            const res = await centerService.getAllCenters();
+
+            if (res?.status === 200) {
+                setCenters(res.data?.data || []);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -67,10 +85,11 @@ const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
             const payload = {
                 name: form.name,
                 categoryId: form.categoryId,
+                centerId: form.centerId,
                 productType: form.productType,
-                serialNumber: form.serialNumber,
-                condition: form.condition,
+                sku: form.sku,
                 price: form.price,
+                rentPrice: form.rentPrice,
                 deposit: 0,
                 stock: form.stock,
                 availability: form.stock > 0 ? "IN_STOCK" : "OUT_OF_STOCK",
@@ -100,6 +119,31 @@ const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
         } catch (error) {
             console.error(error);
             toast.error("Something went wrong");
+        }
+    };
+
+    const handleCenterChange = async (centerId: string) => {
+        try {
+            // update selected center
+            setForm((prev) => ({
+                ...prev,
+                centerId,
+            }));
+
+            // call SKU api
+            const res = await storeProductService.getSKU(centerId);
+
+            if (res?.status === 200) {
+                setForm((prev) => ({
+                    ...prev,
+                    centerId,
+                    sku:
+                        res?.data?.data?.sku || "",
+                }));
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to generate SKU");
         }
     };
 
@@ -169,36 +213,45 @@ const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
 
                     </div>
 
-                    {/* SERIAL + CONDITION */}
+                    {/* CENTER + SKU */}
                     <div className="grid md:grid-cols-2 gap-4">
 
                         <div>
-                            <label className="text-sm font-bold uppercase">Serial Number</label>
-                            <input
-                                value={form.serialNumber}
+                            <label className="text-sm font-bold uppercase">
+                                Center
+                            </label>
+
+                            <select
+                                value={form.centerId}
                                 onChange={(e) =>
-                                    setForm({ ...form, serialNumber: e.target.value })
+                                    handleCenterChange(e.target.value)
                                 }
-                                placeholder="Unique unit serial"
                                 className="w-full mt-1 border-2 border-black px-3 py-2 bg-white shadow-[4px_4px_0px_#000]"
-                            />
+                            >
+                                <option value="">Select Center</option>
+
+                                {centers.map((center: any) => (
+                                    <option key={center.id} value={center.id}>
+                                        {center.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div>
-                            <label className="text-sm font-bold uppercase">Condition</label>
-                            <select value={form.condition}
-                                onChange={(e) =>
-                                    setForm({ ...form, condition: e.target.value })
-                                } className="w-full mt-1 border-2 border-black px-3 py-2 bg-white shadow-[4px_4px_0px_#000]">
-                                <option>GOOD</option>
-                                <option>NEW</option>
-                            </select>
+                            <label className="text-sm font-bold uppercase">SKU</label>
+                            <input
+                                value={form.sku}
+                                readOnly
+                                placeholder="Auto generated SKU"
+                                className="w-full mt-1 border-2 border-black px-3 py-2 bg-gray-100 shadow-[4px_4px_0px_#000]"
+                            />
                         </div>
 
                     </div>
 
                     {/* PRICE + STOCK */}
-                    <div className="grid md:grid-cols-2 gap-4">
+                    <div className="grid md:grid-cols-3 gap-4">
 
                         <div>
                             <label className="text-sm font-bold uppercase">Price (₹)</label>
@@ -206,7 +259,26 @@ const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
                                 type="number"
                                 value={form.price}
                                 onChange={(e) =>
-                                    setForm({ ...form, price: Number(e.target.value) })
+                                    setForm({
+                                        ...form,
+                                        price: e.target.value === "" ? "" : Number(e.target.value),
+                                    })
+                                }
+                                defaultValue={0}
+                                className="w-full mt-1 border-2 border-black px-3 py-2 bg-white shadow-[4px_4px_0px_#000]"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="text-sm font-bold uppercase">Rent Price (per day)</label>
+                            <input
+                                type="number"
+                                value={form.rentPrice}
+                                onChange={(e) =>
+                                    setForm({
+                                        ...form,
+                                        rentPrice: e.target.value === "" ? "" : Number(e.target.value),
+                                    })
                                 }
                                 defaultValue={0}
                                 className="w-full mt-1 border-2 border-black px-3 py-2 bg-white shadow-[4px_4px_0px_#000]"
@@ -218,7 +290,10 @@ const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
                             <input
                                 value={form.stock}
                                 onChange={(e) =>
-                                    setForm({ ...form, stock: Number(e.target.value) })
+                                    setForm({
+                                        ...form,
+                                        stock: e.target.value === "" ? "" : Number(e.target.value),
+                                    })
                                 }
                                 type="number"
                                 defaultValue={0}
@@ -233,7 +308,7 @@ const AddProductModal: React.FC<Props> = ({ onClose, product, onSuccess }) => {
                         type="submit"
                         className="w-full bg-[#ffe600] border-4 border-black py-3 font-black uppercase shadow-[4px_4px_0px_#000] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
                     >
-                      {product ? "Update Product" : "Save Product"}
+                        {product ? "Update Product" : "Save Product"}
                     </button>
 
                 </form>

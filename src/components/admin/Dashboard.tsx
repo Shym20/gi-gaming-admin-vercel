@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import StatCard from '../dashboard/StatCard';
 import RevenueChart from '../dashboard/RevenueChart';
-import SlotGrid from '../dashboard/SlotGrid';
 import type { StatCard as StatCardType, RevenueData } from '../../types';
 import { formatCurrency } from '../../utils/formatters';
 import DashboardApi from '../../apis/dashboard.api';
@@ -31,7 +30,8 @@ const Dashboard: React.FC = () => {
       const res = await dashboardService.getDashboard();
 
       if (res?.status === 200) {
-        setDashboardData(res.data.data);
+        console.log("dvffg");
+        setDashboardData(res.data);
       }
     } catch (error) {
       console.error(error);
@@ -42,36 +42,36 @@ const Dashboard: React.FC = () => {
 
   const statCards: StatCardType[] = [
     {
-      id: 'revenue',
+      id: "revenue",
       title: "TODAY'S REVENUE",
       value: formatCurrency(dashboardData.todayRevenue),
-      icon: 'ph ph-chart-bar',
-      color: 'green',
-      bgClass: 'bg-[#00ff66]',
+      icon: "ph ph-chart-bar",
+      color: "green",
+      bgClass: "#00ff66",
     },
     {
-      id: 'bookings',
+      id: "bookings",
       title: "TODAY'S BOOKINGS",
       value: dashboardData.todayBookings,
-      icon: 'ph ph-calendar-blank',
-      color: 'yellow',
-      bgClass: 'bg-[#ffea00]',
+      icon: "ph ph-calendar-blank",
+      color: "yellow",
+      bgClass: "#ffea00",
     },
     {
-      id: 'rentals',
-      title: 'ACTIVE RENTALS',
+      id: "rentals",
+      title: "ACTIVE RENTALS",
       value: dashboardData.activeRentals,
-      icon: 'ph ph-game-controller',
-      color: 'cyan',
-      bgClass: 'bg-[#00e5ff]',
+      icon: "ph ph-game-controller",
+      color: "cyan",
+      bgClass: "#00e5ff",
     },
     {
-      id: 'users',
-      title: 'TOTAL USERS',
+      id: "users",
+      title: "TOTAL USERS",
       value: dashboardData.totalUsers,
-      icon: 'ph ph-users',
-      color: 'pink',
-      bgClass: 'bg-[#ff3366]',
+      icon: "ph ph-users",
+      color: "pink",
+      bgClass: "#ff3366",
     },
   ];
 
@@ -80,16 +80,6 @@ const Dashboard: React.FC = () => {
       day: item.day,
       amount: item.revenue,
     }));
-
-  const slots = Array.from({ length: 36 }, (_, i) => {
-    const colors = ['pink', 'green', 'yellow', 'white'];
-
-    return {
-      id: i + 1,
-      booked: i % 3 !== 0,
-      color: colors[Math.floor(Math.random() * colors.length)],
-    };
-  });
 
   if (loading) {
     return (
@@ -112,7 +102,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* Bottom Section Skeleton */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
           {/* Revenue Chart Skeleton */}
           <div className="lg:col-span-2 border-4 border-black bg-white p-6 shadow-[6px_6px_0px_#000]">
@@ -138,7 +128,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Slot Grid Skeleton */}
-          <div className="border-4 border-black bg-white p-6 shadow-[6px_6px_0px_#000]">
+          {/* <div className="border-4 border-black bg-white p-6 shadow-[6px_6px_0px_#000]">
             <div className="h-5 bg-gray-300 w-40 mb-8"></div>
 
             <div className="grid grid-cols-6 gap-2">
@@ -149,7 +139,7 @@ const Dashboard: React.FC = () => {
                 ></div>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     );
@@ -165,16 +155,16 @@ const Dashboard: React.FC = () => {
       </div>
 
       {/* Charts and Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 ">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 ">
         {/* Revenue Chart */}
         <div className="lg:col-span-2 min-h-[100%]">
           <RevenueChart data={revenueData} />
         </div>
 
         {/* Slot Utilization */}
-        <div>
+        {/* <div>
           <SlotGrid slots={slots} />
-        </div>
+        </div> */}
       </div>
     </div>
   );

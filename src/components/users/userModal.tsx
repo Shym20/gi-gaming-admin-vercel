@@ -1,6 +1,7 @@
 import React, { useState } from "react"
 import StatusBadge from "../shared/StatusBadge"
 import type { User } from "../../types/apptypes"
+import { Country, State, City } from "country-state-city"
 
 interface Booking {
   id: string
@@ -22,7 +23,8 @@ interface Props {
   user: User
   bookings: Booking[]
   transactions: Transaction[]
-  onSave: (user: User) => void
+  transactionLoading?: boolean
+  onSave: (user: User) => Promise<void> | void
   onClose: () => void
 }
 
@@ -30,10 +32,31 @@ const UserModal: React.FC<Props> = ({
   user,
   bookings = [],
   transactions = [],
+  transactionLoading = false,
   onSave,
   onClose
 }) => {
   const [formData, setFormData] = useState<User>({ ...user })
+  const [saving, setSaving] = useState(false);
+
+  const countries = Country.getAllCountries();
+
+  const selectedCountry = countries.find(
+    (country) => country.name === (formData as any).country
+  );
+
+  const states = selectedCountry
+    ? State.getStatesOfCountry(selectedCountry.isoCode)
+    : [];
+
+  const selectedState = states.find(
+    (state) => state.name === (formData as any).state
+  );
+
+  const cities =
+    selectedCountry && selectedState
+      ? City.getCitiesOfState(selectedCountry.isoCode, selectedState.isoCode)
+      : [];
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -44,11 +67,44 @@ const UserModal: React.FC<Props> = ({
     })
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSave(formData)
-    onClose()
-  }
+  const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const countryName = e.target.value;
+
+    setFormData({
+      ...formData,
+      country: countryName,
+      state: "",
+      city: "",
+    } as any);
+  };
+
+  const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const stateName = e.target.value;
+
+    setFormData({
+      ...formData,
+      state: stateName,
+      city: "",
+    } as any);
+  };
+
+  const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormData({
+      ...formData,
+      city: e.target.value,
+    } as any);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    try {
+      setSaving(true);
+      await onSave(formData);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
@@ -75,7 +131,7 @@ const UserModal: React.FC<Props> = ({
                 <p className="text-xs uppercase font-bold text-gray-500">
                   User Profile
                 </p>
-                <p className="font-bold">{user.id}</p>
+                <p className="font-bold">{user.userId}</p>
               </div>
               <StatusBadge status={user.status} />
             </div>
@@ -103,6 +159,20 @@ const UserModal: React.FC<Props> = ({
                 />
               </div>
             </div>
+
+            {/* <div className="grid grid-cols-1 gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="font-bold text-sm uppercase">Avatar URL</label>
+                <input
+                  name="avatar"
+                  value={(formData as any).avatar || ""}
+                  onChange={handleChange}
+                  className="brutal-input border-2 border-black brutal-shadow hover:bg-[#f4f4f0]"
+                  placeholder="Avatar URL"
+                />
+              </div>
+            </div> */}
+
             {/* PHONE + LOCATION */}
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col gap-1">
@@ -114,14 +184,69 @@ const UserModal: React.FC<Props> = ({
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="font-bold text-sm uppercase">Location / Address</label>
+                <label className="font-bold text-sm uppercase">Address</label>
                 <input
-                  name="location"
-                  value={formData.location || ""}
+                  name="address"
+                  value={(formData as any).address || (formData as any).location || ""}
                   onChange={handleChange}
                   className="brutal-input border-2 border-black brutal-shadow hover:bg-[#f4f4f0] "
                   placeholder="Location"
                 />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="flex flex-col gap-1">
+                <label className="font-bold text-sm uppercase">Country</label>
+                <select
+                  name="country"
+                  value={(formData as any).country || ""}
+                  onChange={handleCountryChange}
+                  className="brutal-input border-2 border-black brutal-shadow hover:bg-[#f4f4f0]"
+                >
+                  <option value="">Select Country</option>
+                  {countries.map((country) => (
+                    <option key={country.isoCode} value={country.name}>
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="font-bold text-sm uppercase">State</label>
+                <select
+                  name="state"
+                  value={(formData as any).state || ""}
+                  onChange={handleStateChange}
+                  disabled={!selectedCountry}
+                  className="brutal-input border-2 border-black brutal-shadow hover:bg-[#f4f4f0] disabled:bg-gray-200 disabled:cursor-not-allowed"
+                >
+                  <option value="">Select State</option>
+                  {states.map((state) => (
+                    <option key={state.isoCode} value={state.name}>
+                      {state.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex flex-col gap-1">
+                <label className="font-bold text-sm uppercase">City</label>
+                <select
+                  name="city"
+                  value={(formData as any).city || ""}
+                  onChange={handleCityChange}
+                  disabled={!selectedState}
+                  className="brutal-input border-2 border-black brutal-shadow hover:bg-[#f4f4f0] disabled:bg-gray-200 disabled:cursor-not-allowed"
+                >
+                  <option value="">Select City</option>
+                  {cities.map((city) => (
+                    <option key={city.name} value={city.name}>
+                      {city.name}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
@@ -137,8 +262,8 @@ const UserModal: React.FC<Props> = ({
 
                   <input
                     name="aadhaar"
-                    value={formData.aadhaar || ""}
-                    onChange={handleChange}
+                    value={(formData as any).aadhaar || ""}
+                    readOnly
                     className="brutal-input border-2 border-black brutal-shadow hover:bg-[#f4f4f0] "
                     placeholder="Aadhaar"
                   />
@@ -147,8 +272,8 @@ const UserModal: React.FC<Props> = ({
                   <label className="font-bold text-sm uppercase">PAN Number</label>
                   <input
                     name="pan"
-                    value={formData.pan || ""}
-                    onChange={handleChange}
+                    value={(formData as any).pan || ""}
+                    readOnly
                     className="brutal-input border-2 border-black brutal-shadow hover:bg-[#f4f4f0] "
                     placeholder="PAN"
                   />
@@ -166,9 +291,9 @@ const UserModal: React.FC<Props> = ({
                   <option value="REJECTED">Status: REJECTED</option>
                 </select>
 
-               <div className="flex items-center">
-                 <StatusBadge status={formData.kycStatus} />
-               </div>
+                <div className="flex items-center">
+                  <StatusBadge status={formData.kycStatus} />
+                </div>
               </div>
             </div>
 
@@ -184,8 +309,11 @@ const UserModal: React.FC<Props> = ({
               </div>
             </div>
 
-            <button className="brutal-btn brutal-btn-primary w-full border-2 border-black  brutal-shadow">
-              Save Profile Changes
+            <button
+              disabled={saving}
+              className="brutal-btn brutal-btn-primary w-full border-2 border-black brutal-shadow disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {saving ? "Saving..." : "Save Profile Changes"}
             </button>
           </form>
 
@@ -196,9 +324,9 @@ const UserModal: React.FC<Props> = ({
             <div>
               <div className="flex flex-row justify-start items-center gap-2 border-b-4 mb-2 border-black">
                 <i className="ph ph-calendar-blank"></i>
-              <h3 className="font-black uppercase">
-                 Booking History
-              </h3>
+                <h3 className="font-black uppercase">
+                  Booking History
+                </h3>
               </div>
 
               <table className="w-full border-2 border-black text-sm">
@@ -227,10 +355,10 @@ const UserModal: React.FC<Props> = ({
 
             {/* TRANSACTIONS */}
             <div>
-                <div className="flex flex-row justify-start items-center gap-2 border-b-4 mb-2 border-black">
-              <h3 className="font-black">
-                   <i className="ph ph-wallet"></i> Wallet Transactions
-              </h3>
+              <div className="flex flex-row justify-start items-center gap-2 border-b-4 mb-2 border-black">
+                <h3 className="font-black">
+                  <i className="ph ph-wallet"></i> Wallet Transactions
+                </h3>
               </div>
 
               <table className="w-full border-2 border-black text-sm">
@@ -243,21 +371,46 @@ const UserModal: React.FC<Props> = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {transactions.map((t) => (
-                    <tr key={t.id} className="border-t-2">
-                      <td className="p-2">{t.id}</td>
-                      <td className="p-2">{t.date}</td>
-                      <td className="p-2">{t.description}</td>
-                      <td
-                        className={`p-2 font-bold ${t.type === "CREDIT"
-                          ? "text-green-500"
-                          : "text-red-500"
-                          }`}
-                      >
-                        {t.type === "CREDIT" ? "+" : "-"}₹{t.amount}
+                  {transactionLoading ? (
+                    <>
+                      {[...Array(4)].map((_, index) => (
+                        <tr key={index} className="border-t-2 animate-pulse">
+                          <td className="p-2">
+                            <div className="h-4 w-16 bg-gray-300 rounded"></div>
+                          </td>
+                          <td className="p-2">
+                            <div className="h-4 w-20 bg-gray-300 rounded"></div>
+                          </td>
+                          <td className="p-2">
+                            <div className="h-4 w-28 bg-gray-300 rounded"></div>
+                          </td>
+                          <td className="p-2">
+                            <div className="h-4 w-14 bg-gray-300 rounded"></div>
+                          </td>
+                        </tr>
+                      ))}
+                    </>
+                  ) : transactions.length === 0 ? (
+                    <tr className="border-t-2">
+                      <td colSpan={4} className="p-4 text-center font-bold">
+                        No wallet transactions found
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    transactions.map((t) => (
+                      <tr key={t.id} className="border-t-2">
+                        <td className="p-2">{t.id}</td>
+                        <td className="p-2">{t.date}</td>
+                        <td className="p-2">{t.description}</td>
+                        <td
+                          className={`p-2 font-bold ${t.type === "CREDIT" ? "text-green-500" : "text-red-500"
+                            }`}
+                        >
+                          {t.type === "CREDIT" ? "+" : "-"}₹{t.amount}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

@@ -125,6 +125,7 @@ const CenterModal: React.FC<Props> = ({ center, onSave, onClose }) => {
               <input
                 name="pcs"
                 type="number"
+                min={1}
                 value={formData.pcs}
                 onChange={handleChange}
                 className="border-2 border-black px-3 py-2 bg-white shadow-[3px_3px_0px_#000] outline-none"
@@ -137,6 +138,7 @@ const CenterModal: React.FC<Props> = ({ center, onSave, onClose }) => {
               <input
                 name="consoles"
                 type="number"
+                min={1}
                 value={formData.consoles}
                 onChange={handleChange}
                 className="border-2 border-black px-3 py-2 bg-white shadow-[3px_3px_0px_#000] outline-none"

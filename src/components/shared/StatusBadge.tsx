@@ -13,9 +13,9 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
     const styles: Record<string, string> = {
       ACTIVE: "bg-[#00ff66] text-black",
       PENDING: "bg-[#ffea00] text-black",
-      COMPLETED: "bg-gray-200 text-black",
-      CANCELLED: "bg-red-200 text-black",
-      REFUNDED: "bg-blue-200 text-black",
+      COMPLETED: "bg-[#00e5ff] text-black",
+      CANCELLED: "bg-red-500 text-black",
+      REFUNDED: "bg-gray-200 text-black",
       PAID: "bg-[#00ff66] text-black",
       OVERDUE: "bg-[#ff3366] text-white",
       RETURNED: "bg-gray-300 text-black",

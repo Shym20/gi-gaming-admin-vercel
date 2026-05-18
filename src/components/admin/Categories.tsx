@@ -19,6 +19,11 @@ const Categories = () => {
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [limit] = useState(5);
+
+    const [totalCategories, setTotalCategories] = useState(0);
+    const [lastPage, setLastPage] = useState(1);
 
     const [selectedCategory, setSelectedCategory] =
         useState<Category | null>(null);
@@ -26,14 +31,17 @@ const Categories = () => {
     const [categories, setCategories] = useState<Category[]>([]);
 
     useEffect(() => {
-        fetchCategories();
-    }, []);
+        fetchCategories(page);
+    }, [page]);
 
-    const fetchCategories = async () => {
+    const fetchCategories = async (currentPage = page) => {
         try {
             setLoading(true);
 
-            const res = await categoriesService.getAllCategories();
+            const res = await categoriesService.getAllCategories(
+                currentPage,
+                limit
+            );
 
             if (res?.status === 200) {
                 const data = res.data?.data || [];
@@ -53,6 +61,10 @@ const Categories = () => {
                 }));
 
                 setCategories(formatted);
+
+                setTotalCategories(res.data?.pagination?.total || 0);
+                setLastPage(res.data?.pagination?.lastPage || 1);
+                setPage(currentPage);
             } else {
                 toast.error(
                     res?.data?.message || "Failed to fetch categories"
@@ -88,11 +100,8 @@ const Categories = () => {
                     res?.data?.message || "Category deleted successfully"
                 );
 
-                setCategories((prev) =>
-                    prev.filter((item) => item.id !== deleteId)
-                );
-
                 setDeleteId(null);
+                await fetchCategories(page);
 
             } else {
                 toast.error(
@@ -256,6 +265,50 @@ const Categories = () => {
                         )}
                     </tbody>
                 </table>
+
+                {/* PAGINATION */}
+                <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-4 border-4 border-black bg-white px-4 py-3 shadow-[6px_6px_0px_#000]">
+
+                    {/* LEFT */}
+                    <div className="text-sm font-bold uppercase">
+                        Total Categories: {totalCategories}
+                    </div>
+
+                    {/* RIGHT */}
+                    <div className="flex items-center gap-2">
+
+                        {/* PREV */}
+                        <button
+                            disabled={page === 1}
+                            onClick={() => setPage((prev) => prev - 1)}
+                            className={`border-2 border-black px-4 py-2 font-bold uppercase shadow-[3px_3px_0px_#000]
+            ${page === 1
+                                    ? "bg-gray-300 cursor-not-allowed"
+                                    : "bg-[#ffe600]"
+                                }`}
+                        >
+                            Prev
+                        </button>
+
+                        {/* PAGE COUNT */}
+                        <div className="border-2 border-black px-4 py-2 font-bold bg-black text-white shadow-[3px_3px_0px_#000]">
+                            {page} / {lastPage}
+                        </div>
+
+                        {/* NEXT */}
+                        <button
+                            disabled={page === lastPage}
+                            onClick={() => setPage((prev) => prev + 1)}
+                            className={`border-2 border-black px-4 py-2 font-bold uppercase shadow-[3px_3px_0px_#000]
+            ${page === lastPage
+                                    ? "bg-gray-300 cursor-not-allowed"
+                                    : "bg-[#ffe600]"
+                                }`}
+                        >
+                            Next
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {/* Modal */}
@@ -266,7 +319,7 @@ const Categories = () => {
                     onSuccess={async () => {
                         setShowForm(false);
 
-                        await fetchCategories();
+                        await fetchCategories(page);
                     }}
                 />
             )}

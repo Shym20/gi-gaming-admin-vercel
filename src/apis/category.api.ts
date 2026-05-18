@@ -68,12 +68,15 @@ class CategoryApi extends HttpClient {
   // GET ALL CATEGORIES
   // =========================
 
-  public getAllCategories = async (): Promise<AxiosResponse> => {
-    return this.instance({
-      method: this.getAllCategoriesConfig.Method,
-      url: this.getAllCategoriesConfig.Endpoint,
-    });
-  };
+  public getAllCategories = async (
+  page = 1,
+  limit = 10
+): Promise<AxiosResponse> => {
+  return this.instance({
+    method: this.getAllCategoriesConfig.Method,
+    url: `${this.getAllCategoriesConfig.Endpoint}?page=${page}&limit=${limit}`,
+  });
+};
 
   // =========================
   // CREATE CATEGORY
@@ -97,13 +100,12 @@ class CategoryApi extends HttpClient {
 
   public updateCategory = async (
     payload: {
-      id: string;
       name: string;
-    }
+    }, id: string
   ): Promise<AxiosResponse> => {
     return this.instance({
       method: this.updateCategoryConfig.Method,
-      url: `${this.updateCategoryConfig.Endpoint}/${payload.id}`,
+      url: `${this.updateCategoryConfig.Endpoint}/${id}`,
       data: payload,
     });
   };

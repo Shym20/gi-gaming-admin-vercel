@@ -7,9 +7,8 @@ import ApiRoutes from "../configs/endpoints.config";
 // 🔹 Request type
 type CreateRentalRequest = {
     name: string;
-    categoryId: string;
+    centerId: string;
     rentalType: string;
-    status: string;
     basePrice: number;
     deposit: number;
     stock: number;
@@ -17,14 +16,7 @@ type CreateRentalRequest = {
         productId: string;
         quantity: number;
     }[];
-};
-
-type UpdateRentalRequest = {
-    id: string;
-    name: string;
-    price: number;
-    stock: number;
-};
+}
 
 
 // 🔹 API Config type
@@ -79,19 +71,43 @@ class RentalApi extends HttpClient {
     };
 
     // Get All Rentlas API
-    public getAllRentals = async (): Promise<AxiosResponse> => {
+    public getAllRentals = async (
+        page = 1,
+        limit = 10,
+        search?: string,
+        rentalType?: string,
+        status?: string
+    ): Promise<AxiosResponse> => {
+        const params = new URLSearchParams();
+
+        params.append("page", String(page));
+        params.append("limit", String(limit));
+
+        if (search?.trim()) {
+            params.append("search", search.trim());
+        }
+
+        if (rentalType) {
+            params.append("rentalType", rentalType);
+        }
+
+        if (status) {
+            params.append("status", status);
+        }
+
         return this.instance({
             method: this.getAllRentalsConfig.Method,
-            url: this.getAllRentalsConfig.Endpoint,
+            url: `${this.getAllRentalsConfig.Endpoint}?${params.toString()}`,
         });
     };
 
     public updateRentals = async (
-        reqBody: UpdateRentalRequest
+        id: string,
+        reqBody: CreateRentalRequest
     ): Promise<AxiosResponse> => {
         return this.instance({
             method: this.updateRentalConfig.Method,
-            url: `${this.updateRentalConfig.Endpoint}/${reqBody.id}`,
+            url: `${this.updateRentalConfig.Endpoint}/${id}`,
             data: reqBody,
         });
     };

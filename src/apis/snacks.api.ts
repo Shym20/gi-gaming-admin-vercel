@@ -6,16 +6,16 @@ import ApiRoutes from "../configs/endpoints.config";
 
 // 🔹 Request type
 type CreateSnacksRequest = {
-  name: string;
-  price: number;
-  stock: number;
+    name: string;
+    price: number;
+    stock: number;
 };
 
 type UpdateSnacksRequest = {
-  id: string;
-  name: string;
-  price: number;
-  stock: number;
+    id: string;
+    name: string;
+    price: number;
+    stock: number;
 };
 
 
@@ -71,10 +71,13 @@ class SnacksApi extends HttpClient {
     };
 
     // Get All Snacks API
-    public getAllSnacks = async (): Promise<AxiosResponse> => {
+    public getAllSnacks = async (
+        page = 1,
+        limit = 10
+    ): Promise<AxiosResponse> => {
         return this.instance({
             method: this.getAllSnacksConfig.Method,
-            url: this.getAllSnacksConfig.Endpoint,
+            url: `${this.getAllSnacksConfig.Endpoint}?page=${page}&limit=${limit}`,
         });
     };
 
@@ -89,11 +92,11 @@ class SnacksApi extends HttpClient {
     };
 
     public deleteSnacks = async (id: string): Promise<AxiosResponse> => {
-  return this.instance({
-    method: this.deleteSnacksConfig.Method,
-    url: `${this.deleteSnacksConfig.Endpoint}/${id}`,
-  });
-};
+        return this.instance({
+            method: this.deleteSnacksConfig.Method,
+            url: `${this.deleteSnacksConfig.Endpoint}/${id}`,
+        });
+    };
 }
 
 export default SnacksApi;

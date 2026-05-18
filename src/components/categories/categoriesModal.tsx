@@ -33,10 +33,7 @@ const CategoryModal: React.FC<Props> = ({
             let res;
 
             if (category?.id) {
-                res = await categoriesService.updateCategory({
-                    id: category.id,
-                    name: form.name,
-                });
+                res = await categoriesService.updateCategory(payload, category.id);
             } else {
                 res = await categoriesService.createCategory(payload);
             }
